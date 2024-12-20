@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <title>Lista de Padres</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
+</head>
+<body>
+<header>
+    <div class="header-content">
+        <h1>Guardería - Lista de Padres</h1>
+        <div class="header-buttons">
+            <a th:href="@{/dashboard}" class="btn-header">Dashboard</a>
+            <a th:href="@{/padres/create}" class="btn-header">Crear Padre</a>
+            <a th:href="@{/logout}" class="btn-header logout-btn">Cerrar Sesión</a>
+        </div>
+    </div>
+</header>
+
+<main>
+    <h2>Padres Registrados</h2>
+
+    <table>
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Nombre Completo</th>
+            <th>Teléfono</th>
+            <th>Email</th>
+            <th>Niños a cargo</th>
+            <th sec:authorize="hasRole('ADMINISTRADOR')">Editar</th>
+            <th sec:authorize="hasRole('ADMINISTRADOR')">Eliminar</th>
+        </tr>
+        </thead>
+        <tbody th:each="padre : ${padres}">
+        <tr>
+            <td th:text="${padre.id}"></td>
+            <td th:text="${padre.nombreCompleto}"></td>
+            <td th:text="${padre.telefono}"></td>
+            <td th:text="${padre.email}"></td>
+            <td th:text="${padre.ninos.size()}"></td>
+            <td sec:authorize="hasRole('ADMINISTRADOR')">
+                <a th:href="@{'/padres/edit/' + ${padre.id}}">Editar</a>
+            </td>
+            <td sec:authorize="hasRole('ADMINISTRADOR')">
+                <form th:action="@{'/padres/delete/' + ${padre.id}}" method="post">
+                    <button type="submit" onclick="return confirm('¿Eliminar este padre?')">Eliminar</button>
+                </form>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</main>
+
+<footer>
+    <p>Guardería - Todos los derechos reservados</p>
+</footer>
+</body>
+</html>

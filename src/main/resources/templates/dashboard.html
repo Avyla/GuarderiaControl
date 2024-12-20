@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="es"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard - Guardería</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
+</head>
+<body>
+<header>
+    <div class="header-content">
+        <h1>Guardería - Dashboard</h1>
+        <div class="header-buttons">
+            <a th:href="@{/padres}" class="btn-header">Ver Padres</a>
+            <a th:href="@{/padres/create}" class="btn-header">Crear Padre</a>
+            <a th:href="@{/ninos/create}" class="btn-header">Crear Niño</a>
+            <a th:href="@{/logout}" class="btn-header logout-btn">Cerrar Sesión</a>
+        </div>
+    </div>
+</header>
+
+<main>
+    <div class="table-header-container">
+        <h2>Lista de Niños</h2>
+        <div class="filters-container">
+            <div class="search-box">
+                <label for="searchInput"><strong>Buscar:</strong></label>
+                <input type="text" id="searchInput" placeholder="Buscar por nombre de niño o padre..." />
+            </div>
+            <div class="state-filter">
+                <label for="estadoFilter"><strong>Estado Pago:</strong></label>
+                <select id="estadoFilter">
+                    <option value="ALL">Todos</option>
+                    <option value="PAGADO">Pagado</option>
+                    <option value="POR_PAGAR">Por Pagar</option>
+                    <option value="VENCIDO">Vencido</option>
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <table id="ninosTable">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Nombre Completo</th>
+            <th>Fecha Nacimiento</th>
+            <th>Tipo Cuidado</th>
+            <th>Padre</th>
+            <th>Estado Pago</th>
+            <th>Monto Pago</th>
+            <th>Fecha Corte</th>
+            <th>Acción</th>
+            <th sec:authorize="hasRole('ADMINISTRADOR')">Editar</th>
+            <th sec:authorize="hasRole('ADMINISTRADOR')">Eliminar</th>
+        </tr>
+        </thead>
+        <tbody th:each="nino : ${ninos}">
+        <tr th:classappend="${
+             (#lists.isEmpty(nino.pagos)) ? '' :
+             (nino.pagos.get(0).estado == T(com.guarderia.GuarderiaControl.util.EstadoPago).VENCIDO ? ' fila-vencido' :
+             (nino.pagos.get(0).estado == T(com.guarderia.GuarderiaControl.util.EstadoPago).POR_PAGAR ? ' fila-por-pagar' :
+             (nino.pagos.get(0).estado == T(com.guarderia.GuarderiaControl.util.EstadoPago).PAGADO ? ' fila-pagado' : '')))}"
+            th:attr="data-estado-pago=${#lists.isEmpty(nino.pagos) ? '' : nino.pagos.get(0).estado}">
+
+            <td th:text="${nino.id}"></td>
+            <td th:text="${nino.nombreCompleto}"></td>
+            <td th:text="${nino.fechaNacimiento}"></td>
+            <td th:text="${nino.tipoCuidado}"></td>
+            <td th:text="${nino.padre.nombreCompleto}"></td>
+            <td th:text="${#lists.isEmpty(nino.pagos) ? '' : nino.pagos.get(0).estado}"></td>
+            <td th:text="${#lists.isEmpty(nino.pagos) ? '' : nino.pagos.get(0).monto}"></td>
+            <td th:text="${#lists.isEmpty(nino.pagos) ? '' : nino.pagos.get(0).fechaCorte}"></td>
+            <td>
+                <span th:if="${#lists.isEmpty(nino.pagos)}">N/A</span>
+                <span th:if="${!#lists.isEmpty(nino.pagos)}">
+                    <span th:if="${nino.pagos.get(0).estado == T(com.guarderia.GuarderiaControl.util.EstadoPago).PAGADO}">Pagado</span>
+                    <a th:if="${nino.pagos.get(0).estado != T(com.guarderia.GuarderiaControl.util.EstadoPago).PAGADO}"
+                       th:href="@{'/pagos/pagar/' + ${nino.pagos.get(0).id}}">Pagar</a>
+                </span>
+            </td>
+            <td sec:authorize="hasRole('ADMINISTRADOR')">
+                <a th:href="@{'/ninos/edit/' + ${nino.id}}">Editar</a>
+            </td>
+            <td sec:authorize="hasRole('ADMINISTRADOR')">
+                <form th:action="@{'/ninos/delete/' + ${nino.id}}" method="post">
+                    <button type="submit" onclick="return confirm('¿Eliminar este niño?')">Eliminar</button>
+                </form>
+            </td>
+        </tr>
+
+        <!-- Pagos adicionales -->
+        <tr th:if="${nino.pagos.size() > 1}">
+            <td colspan="11" style="padding:0; border:none;">
+                <table class="sub-table">
+                    <thead>
+                    <tr>
+                        <th colspan="5">Pagos adicionales</th>
+                        <th>Estado</th>
+                        <th>Monto</th>
+                        <th>Fecha Corte</th>
+                        <th>Acción</th>
+                        <th sec:authorize="hasRole('ADMINISTRADOR')">Editar</th>
+                        <th sec:authorize="hasRole('ADMINISTRADOR')">Eliminar</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="pago, stat : ${nino.pagos}" th:if="${stat.index > 0}"
+                        th:classappend="${pago.estado == T(com.guarderia.GuarderiaControl.util.EstadoPago).VENCIDO ? ' fila-vencido' :
+                        (pago.estado == T(com.guarderia.GuarderiaControl.util.EstadoPago).POR_PAGAR ? ' fila-por-pagar' :
+                        (pago.estado == T(com.guarderia.GuarderiaControl.util.EstadoPago).PAGADO ? ' fila-pagado' : ''))}"
+                        th:attr="data-estado-pago=${pago.estado}">
+                        <td colspan="5"></td>
+                        <td th:text="${pago.estado}"></td>
+                        <td th:text="${pago.monto}"></td>
+                        <td th:text="${pago.fechaCorte}"></td>
+                        <td>
+                            <span th:if="${pago.estado == T(com.guarderia.GuarderiaControl.util.EstadoPago).PAGADO}">Pagado</span>
+                            <a th:if="${pago.estado != T(com.guarderia.GuarderiaControl.util.EstadoPago).PAGADO}"
+                               th:href="@{'/pagos/pagar/' + ${pago.id}}">Pagar</a>
+                        </td>
+                        <td sec:authorize="hasRole('ADMINISTRADOR')">
+                            <a th:href="@{'/pagos/edit/' + ${pago.id}}">Editar</a>
+                        </td>
+                        <td sec:authorize="hasRole('ADMINISTRADOR')">
+                            <form th:action="@{'/pagos/delete/' + ${pago.id}}" method="post">
+                                <button type="submit" onclick="return confirm('¿Eliminar este pago?')">Eliminar</button>
+                            </form>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</main>
+
+<footer>
+    <p>Guardería - Todos los derechos reservados</p>
+</footer>
+
+<script>
+    const searchInput = document.getElementById('searchInput');
+    const estadoFilter = document.getElementById('estadoFilter');
+    const table = document.getElementById('ninosTable');
+
+    function filterRows() {
+        const filterText = searchInput.value.toLowerCase();
+        const filterEstado = estadoFilter.value;
+
+        const rows = table.querySelectorAll('tbody > tr');
+
+        // Cada niño principal está en una fila. La siguiente fila (si existe) es la de subtabla.
+        // Filtraremos las filas principales y ocultaremos la subtabla en consecuencia.
+        // Identificamos la fila principal como la que tiene ID del niño (col1) y no tiene la subtabla:
+        // Un approach sencillo: si la fila tiene data-estado-pago o no.
+        // Aquí: la fila del niño principal tiene data-estado-pago, la de subtabla no.
+
+        let mainRows = [];
+        rows.forEach(r => {
+            // Tiene la primera columna con ID? asumimos si td[0] existe.
+            if (r.querySelector('td') && !r.querySelector('.sub-table')) {
+                mainRows.push(r);
+            }
+        });
+
+        mainRows.forEach(row => {
+            const nombreNino = row.children[1].textContent.toLowerCase();
+            const padre = row.children[4].textContent.toLowerCase();
+            const estado = row.getAttribute('data-estado-pago') || '';
+
+            // Filtrar por texto:
+            let textMatch = (nombreNino.includes(filterText) || padre.includes(filterText));
+            // Filtrar por estado:
+            let estadoMatch = (filterEstado === 'ALL' || estado === filterEstado);
+
+            if (textMatch && estadoMatch) {
+                row.style.display = '';
+                const nextRow = row.nextElementSibling;
+                if (nextRow && nextRow.querySelector('.sub-table')) {
+                    nextRow.style.display = '';
+                }
+            } else {
+                row.style.display = 'none';
+                const nextRow = row.nextElementSibling;
+                if (nextRow && nextRow.querySelector('.sub-table')) {
+                    nextRow.style.display = 'none';
+                }
+            }
+        });
+    }
+
+    searchInput.addEventListener('keyup', filterRows);
+    estadoFilter.addEventListener('change', filterRows);
+</script>
+</body>
+</html>

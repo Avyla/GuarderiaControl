@@ -1,0 +1,200 @@
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    background: #f8f9fa;
+    color: #333;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+header, footer {
+    background: #0d6efd;
+    color: #fff;
+    padding: 10px 20px;
+}
+
+.header-content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+header h1 {
+    margin: 0;
+    font-size: 22px;
+}
+
+.header-buttons {
+    display: flex;
+    gap: 10px;
+}
+
+.btn-header {
+    background: #ffffff22;
+    color: #fff;
+    padding: 7px 12px;
+    border-radius: 4px;
+    text-decoration: none;
+    font-weight: bold;
+    transition: background 0.3s;
+}
+.btn-header:hover {
+    background: #ffffff44;
+}
+.logout-btn {
+    background: #dc3545;
+}
+.logout-btn:hover {
+    background: #c82333;
+}
+
+main {
+    flex: 1;
+    padding: 20px;
+    max-width: 1000px;
+    width: 100%;
+    margin: 20px auto;
+    background: #fff;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+
+h1, h2 {
+    margin-top: 0;
+}
+h2 {
+    margin-bottom: 10px;
+    text-align: center;
+    font-size: 20px;
+    color: #333;
+    background: #e9ecef;
+    padding: 10px;
+    border-radius: 4px;
+}
+
+.table-header-container {
+    margin-bottom: 20px;
+}
+
+.filters-container {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+    align-items: center;
+    margin-top: 10px;
+    background: #f0f0f0;
+    padding: 10px;
+    border-radius: 5px;
+}
+
+.search-box, .state-filter {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.search-box label, .state-filter label {
+    font-weight: bold;
+}
+
+.search-box input, .state-filter select {
+    padding: 5px;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #fff;
+    margin-top: 20px;
+}
+
+th, td {
+    padding: 8px;
+    border: 1px solid #ccc;
+    text-align: left;
+    vertical-align: middle;
+    font-size: 14px;
+}
+
+thead {
+    background: #e9ecef;
+    font-weight: bold;
+}
+
+tbody tr:hover {
+    background: #f1f1f1;
+}
+
+.sub-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #fff;
+}
+
+.sub-table th, .sub-table td {
+    border: 1px solid #ccc;
+    padding: 8px;
+    font-size: 13px;
+}
+
+/* Clases para filas según estado del pago */
+.fila-vencido {
+    background: #f8d7da; /* Rojo suave */
+}
+.fila-por-pagar {
+    background: #fff3cd; /* Amarillo suave */
+}
+.fila-pagado {
+    background: #d1e7dd; /* Verde suave */
+}
+
+.child-rows td {
+    background: #fafafa;
+}
+
+button {
+    background: #0d6efd;
+    color: #fff;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+button:hover {
+    background: #0a58ca;
+}
+
+form div {
+    margin-bottom: 10px;
+}
+
+form label {
+    display: inline-block;
+    width: 150px;
+    font-weight: bold;
+}
+
+form input, form select {
+    padding: 5px;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    width: calc(100% - 170px);
+    max-width: 300px;
+}
+
+.form-container {
+    max-width: 500px;
+    margin: 0 auto;
+    background: #f8f8f8;
+    padding: 20px;
+    border-radius: 4px;
+    box-shadow: 0 0 5px rgba(0,0,0,0.1);
+}
+
+footer {
+    text-align: center;
+    font-size: 14px;
+    margin-top: auto;
+}
